@@ -1,4 +1,4 @@
-package com.ewtm.primeirobatch;
+package com.ewtm.primeirobatch.job;
 
 
 import org.springframework.batch.core.Job;
@@ -7,44 +7,30 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @EnableBatchProcessing
 @Configuration
-public class BatchConfig {
+public class JobBatchConfig {
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
-    @Autowired
-    private StepBuilderFactory stepBuilderFactory;
-
     @Bean
-    public Job imprimiOlaJob(){
+    public Job imprimiOlaJob(Step imprimeOlaStep){
         return jobBuilderFactory
                 .get("imprime Ola Job")
-                .start(imprimeOlaStep())
+                .start(imprimeOlaStep)
+                .incrementer( new RunIdIncrementer())
                 .build();
     }
-
-    public Step imprimeOlaStep(){
-        return stepBuilderFactory
-                .get("imprime Ola Step")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("Ola, Mundo !!!");
-                        return RepeatStatus.FINISHED;
-                    }
-                })
-                .build();
-    }
-
-
 
 }
